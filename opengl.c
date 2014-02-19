@@ -1,19 +1,11 @@
 #include "opengl.h"
 
-VBO vbo_init(GLfloat* vertices, GLuint* indices) {
-	VBO out = {0,0};
+VBO vbo_init(GLfloat* vertices) {
+	VBO out;
 
-	if(vertices != NULL) {
-		glGenBuffers(1, &(out.vbo));
-		glBindBuffer(GL_ARRAY_BUFFER, out.vbo);
-		glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
-	}
-
-	if(indices != NULL) {
-		glGenBuffers(1, &(out.ibo));
-		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, out.ibo);
-		glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_DYNAMIC_DRAW);
-	}
+	glGenBuffers(1, &(out.vbo));
+	glBindBuffer(GL_ARRAY_BUFFER, out.vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
 	vbo_unbind();
 
@@ -23,15 +15,12 @@ VBO vbo_init(GLfloat* vertices, GLuint* indices) {
 void vbo_bind(VBO vbo)
 {
 	glBindBuffer(GL_ARRAY_BUFFER, vbo.vbo);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, vbo.ibo);
-	glEnableClientState(GL_VERTEX_ARRAY);
 }
 
 void vbo_unbind()
 {
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	glDisableClientState(GL_VERTEX_ARRAY);
 }
 
 void vbo_kill(VBO vbo)
@@ -63,7 +52,7 @@ GLuint compile(const char* filename, GLenum type)
 	const char *source = read_file(filename);
 	GLuint id = glCreateShader(type);
 	glShaderSource(id, 1, &source, NULL);
-	free(source);
+	free((void*)source);
 	glCompileShader(id);
 	glGetShaderiv(id, GL_COMPILE_STATUS, &compile_ok);
 	if (!compile_ok) {
@@ -132,11 +121,11 @@ void shader_kill(Shader shader)
 /* 	glBindAttribLocation(shader.program, location, name); */
 /* } */
 
-/* void use(Shader shader) */
-/* { */
-/* 	glUseProgram(shader.program); */
-/* 	/1* map<string, GLint>::iterator p; *1/ */
-/* 	/1* for (p = attributes.begin(); p != attributes.end(); ++p) { *1/ */
-/* 	/1* 	glEnableVertexAttribArray(p->second); *1/ */
-/* 	/1* } *1/ */
-/* } */
+void shader_use(Shader shader)
+{
+	glUseProgram(shader.program);
+	/* map<string, GLint>::iterator p; */
+	/* for (p = attributes.begin(); p != attributes.end(); ++p) { */
+	/* 	glEnableVertexAttribArray(p->second); */
+	/* } */
+}

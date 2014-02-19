@@ -1,2 +1,2 @@
 all:
-	gcc -lGL -lglut -lfreeimage -o main main.c opengl.c
+	gcc -g -lGL -lglut -lfreeimage -o main opengl.c main.c

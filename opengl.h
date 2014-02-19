@@ -4,6 +4,7 @@
 #include <GL/gl.h>
 #include <GL/glut.h>
 
+
 typedef struct {
 	GLuint vs;
 	GLuint fs;
@@ -11,8 +12,7 @@ typedef struct {
 } Shader;
 
 Shader shader_init(const char *vs_filename, const char *fs_filename);
-void killshader(Shader shader);
-
+void shader_kill(Shader shader);
 void shader_use(Shader shader);
 void shader_unuse();
 
@@ -23,7 +23,7 @@ typedef struct {
 } VBO;
 
 
-VBO vbo_init(GLfloat* vertices, GLuint* indices);
+VBO vbo_init(GLfloat* vertices);
 void vbo_bind(VBO vbo);
 void vbo_unbind();
 void bind_attribute(Shader shader, GLuint location, const GLchar* name);
