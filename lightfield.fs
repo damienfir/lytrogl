@@ -28,18 +28,14 @@ void main(void) {
 
 	vec2 e1 = rot * vec2(D, 0);
 	vec2 e2 = rot * vec2(D * sqrt(3)/2, D/2);
+	mat2 h = mat2(e1, e2);
 
-	// ulens centers, from [-0.5,0.5] to [0,n_ulens] after rectification
-	vec2 lf_rot = rot * lf_coord / zoom;
-	vec2 xy = (lf_rot * size + (size/2) + offset_xy) / usize;
-	vec2 xy_r = round(xy);
+	vec2 proj = transpose(h) * lf_coord;
+	vec2 coef = vec2(0);
+	coef.x = proj.x / length(e1);
+	coef.y = proj.y / length(e2);
 
-	if (mod(xy_r.y,2) == 0) {
-		xy_r.x += usize.x/2;
-		xy_r
-	}
-
-	out_color = texture(lf, xy * usize / size);
+	out_color = texture(lf, lf_coord);
 
 	/* vec4 pixel_color = vec4(0); */
 
