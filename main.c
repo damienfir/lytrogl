@@ -31,7 +31,7 @@ struct {
 
 void setup() {
 	
-	shader = shader_init("lightfield.vs","lightfield.fs");
+	shader = shader_init("lightfield.v.glsl","lightfield.f.glsl");
 	shader_use(shader);
 
 	GLfloat vertices[] = {-1.f,-1.f, 1.f,-1.f, -1.f,1.f, 1.f,1.f};

@@ -28,11 +28,11 @@ void main(void) {
 
 	mat2 hex = rot * (D * mat2(vec2(1, 0), vec2(1/2.0, sqrt(3)/2)));
 
-	vec2 uimage_coord = lf_coord * size - offset_xy;
+	vec2 uimage_coord = 0.2 * lf_coord * size - offset_xy;
 	vec2 proj = inverse(hex) * uimage_coord;
-	vec2 coef = 0;
+	vec2 coef = proj;
 
-	out_color = texture(lf, (proj * transpose(hex)) / size + 0.5);
+	out_color = texture(lf, (coef * transpose(hex)) / size + 0.5);
 
 	/* vec4 pixel_color = vec4(0); */
 
