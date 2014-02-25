@@ -1,4 +1,4 @@
-# version 440
+# version 420
 
 in vec2 vertices;
 in vec2 coord;

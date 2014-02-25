@@ -7,10 +7,6 @@ const char* fname = "img/macro.tif";
 Shader shader;
 GLuint texture;
 
-/* struct { */
-/* 	VBO vertices; */
-/* 	VBO coord; */
-/* } vbo; */
 struct {
 	VBO vertices;
 	VBO coord;
@@ -30,7 +26,7 @@ struct {
 
 
 void setup() {
-	
+
 	shader = shader_init("lightfield.v.glsl","lightfield.f.glsl");
 	shader_use(shader);
 
@@ -51,10 +47,12 @@ void setup() {
 	attrib.coord = glGetAttribLocation(shader.program, "coord");
 	glEnableVertexAttribArray(attrib.coord);
 	glVertexAttribPointer(attrib.coord, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
 }
 
 
 void load_lf() {
+
 	FreeImage_Initialise(1);
 	FREE_IMAGE_FORMAT fif = FreeImage_GetFileType(fname, 0);
 	FIBITMAP *img = FreeImage_Load(fif, fname, TIFF_DEFAULT);
@@ -74,18 +72,22 @@ void load_lf() {
 	unif.lf = glGetUniformLocation(shader.program, "lf");
 	glUniform1i(unif.lf, 0);
 
-	/* unif.t = glGetUniformLocation(shader.program, "t"); */
-	/* glUniform1i(unif.t, 0); */
+	unif.t = glGetUniformLocation(shader.program, "t");
+	glUniform1f(unif.t, -1.0);
 
 	/* unif.D = glGetUniformLocation(shader.program, "D"); */
+	/* printf("%d\n", unif.D); */
 	/* glUniform1i(unif.D, 9.97); */
 
 	/* unif.imsize = glGetUniformLocation(shader.program, "imsize"); */
 	/* glUniform2i(unif.imsize, width, height); */
+
 }
 
+void idle() {}
 
 void display() {
+
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
 	glutSwapBuffers();
@@ -104,6 +106,7 @@ int main(int argc, char *argv[])
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	glutDisplayFunc(&display);
+	glutIdleFunc(&idle);
 
 	setup();
 	load_lf();
