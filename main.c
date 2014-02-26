@@ -1,4 +1,5 @@
 #include <FreeImage.h>
+#include <gtk/gtk.h>
 
 #include "opengl.h"
 
@@ -25,7 +26,9 @@ struct {
 } unif;
 
 
-void setup() {
+void setup_shader() {
+
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 
 	shader = shader_init("lightfield.v.glsl","lightfield.f.glsl");
 	shader_use(shader);
@@ -70,10 +73,15 @@ void load_lf() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 	unif.lf = glGetUniformLocation(shader.program, "lf");
+	unif.t = glGetUniformLocation(shader.program, "t");
+	printf("%d\n", unif.lf);
+	printf("%d\n", unif.t);
+
 	glUniform1i(unif.lf, 0);
 
-	unif.t = glGetUniformLocation(shader.program, "t");
-	glUniform1f(unif.t, -1.0);
+	float val[1];
+	glGetUniformfv(shader.program, unif.t, val);
+	printf("%f\n", val[0]);
 
 	/* unif.D = glGetUniformLocation(shader.program, "D"); */
 	/* printf("%d\n", unif.D); */
@@ -84,7 +92,10 @@ void load_lf() {
 
 }
 
-void idle() {}
+void idle() {
+	float t[1] = {-2.f};
+	glUniform1fv(unif.t, 1, t);
+}
 
 void display() {
 
@@ -93,25 +104,37 @@ void display() {
 	glutSwapBuffers();
 }
 
-
-
-int main(int argc, char *argv[])
-{
-	glutInit(&argc, argv);
+void opengl_setup() {
 
 	glutInitDisplayMode(GLUT_RGB | GLUT_DOUBLE);
 	glutInitWindowSize(1024,1024);
 	glutCreateWindow("lytrogl");
 
-	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-
 	glutDisplayFunc(&display);
 	glutIdleFunc(&idle);
 
-	setup();
+	setup_shader();
 	load_lf();
+}
 
-	glutMainLoop();
+void gtk_setup(int argc, char* argv[]) {
+
+}
+
+int main(int argc, char *argv[])
+{
+	/* glutInit(&argc, argv); */
+	/* opengl_setup(); */
+
+	gtk_init(&argc, &argv);
+	gtk_gl_init(&argc, &argv);
+
+	GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_show(window);
+
+	gtk_main();
+
+	/* glutMainLoop(); */
 
 	return 0;
 }

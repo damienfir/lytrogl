@@ -4,8 +4,7 @@ in vec2 lf_coord;
 out vec4 out_color;
 
 uniform sampler2D lf;
-
-uniform float t = 0;
+uniform float t;
 /* uniform float D; */
 /* uniform float offset; */
 
