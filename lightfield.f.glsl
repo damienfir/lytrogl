@@ -30,7 +30,7 @@ vec2 nearest(vec2 axial) {
 void main(void) {
 
 	int lim = 3;
-	float zoom = 5;
+	float zoom = 1;
 
 	// from metadata
 	int size = 3280;

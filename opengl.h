@@ -6,9 +6,9 @@
 
 
 typedef struct {
-	GLuint vs;
-	GLuint fs;
-	GLuint program;
+    GLuint vs;
+    GLuint fs;
+    GLuint program;
 } Shader;
 
 Shader shader_init(const char *vs_filename, const char *fs_filename);
@@ -18,8 +18,8 @@ void shader_unuse();
 
 
 typedef struct {
-	GLuint vbo;
-	GLuint ibo;
+    GLuint vbo;
+    GLuint ibo;
 } VBO;
 
 

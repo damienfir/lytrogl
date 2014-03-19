@@ -2,3 +2,5 @@ img/*
 *.o
 *.swp
 lytrogl
+*.png
+tags
