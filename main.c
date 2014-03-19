@@ -181,20 +181,25 @@ realize(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
     gdk_gl_drawable_gl_end(gl_drawable);
 }
 
-int
-main(int argc, char *argv[])
+
+void
+interface_setup()
 {
-
-    gtk_init(&argc, &argv);
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-    gtk_window_set_default_size(GTK_WINDOW(window), 1024, 1024);
+    GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
+    GtkWidget *vbox_tools = gtk_vbox_new(FALSE, 0);
+    GtkWidget *focus_slider = gtk_vscale_new_with_range(-2, 2, 1);
     GtkWidget *drawing = gtk_drawing_area_new();
-    gtk_container_add(GTK_CONTAINER(window), drawing);
-    gtk_widget_set_events(drawing, GDK_EXPOSURE_MASK);
-    g_signal_connect_swapped(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
+    GtkWidget *halign = gtk_alignment_new(0,0,0,0);
 
+    gtk_window_set_default_size(GTK_WINDOW(window), 1024, 1024);
 
-    gtk_gl_init(&argc, &argv);
+    gtk_container_add(GTK_CONTAINER(window), hbox);
+
+    gtk_box_pack_start(GTK_BOX(hbox), vbox_tools, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(vbox_tools), focus_slider, TRUE, TRUE, 0);
+    gtk_box_pack_start(GTK_BOX(hbox), drawing, TRUE, TRUE, 0);
+
     GdkGLConfig *gl_config = gdk_gl_config_new_by_mode(GDK_GL_MODE_RGB  | GDK_GL_MODE_DOUBLE);
     if (!gl_config) {
         g_assert_not_reached();
@@ -203,11 +208,24 @@ main(int argc, char *argv[])
         g_assert_not_reached();
     }
     gtk_widget_set_gl_capability(drawing, gl_config, NULL, TRUE, GDK_GL_RGBA_TYPE);
+
+    gtk_widget_set_events(drawing, GDK_EXPOSURE_MASK);
+    g_signal_connect_swapped(window, "destroy", G_CALLBACK(gtk_main_quit), NULL);
     g_signal_connect(drawing, "realize", G_CALLBACK(realize), NULL);
     g_signal_connect(drawing, "configure-event", G_CALLBACK(reshape), NULL);
     g_signal_connect(drawing, "expose-event", G_CALLBACK(display), NULL);
 
     gtk_widget_show_all(window);
+}
+
+int
+main(int argc, char *argv[])
+{
+
+    gtk_init(&argc, &argv);
+    gtk_gl_init(&argc, &argv);
+
+    interface_setup();
 
     gtk_main();
 
