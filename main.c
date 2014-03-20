@@ -11,10 +11,6 @@ GLuint texture;
 GLuint framebuffer_id;
 GLuint renderbuffer_id;
 
-struct
-{
-    VBO vertices;
-} vbo;
 
 struct
 {
@@ -28,7 +24,6 @@ struct
     GLint t;
     GLint D;
 } unif;
-
 
 void
 shader_setup()
@@ -87,6 +82,7 @@ lightfield_setup()
 
 }
 
+
 void
 framebuffer_setup()
 {
@@ -110,6 +106,7 @@ framebuffer_setup()
     glBindRenderbuffer(GL_RENDERBUFFER, 0);
 }
 
+
 void
 save_output()
 {
@@ -120,6 +117,19 @@ save_output()
     FIBITMAP *image = FreeImage_ConvertFromRawBits(im, 1024, 1024, 3*1024, 8,  FI_RGBA_RED_MASK, FI_RGBA_GREEN_MASK, FI_RGBA_BLUE_MASK, FALSE);
     FreeImage_Save(FIF_PNG, image, "output.png", 0);
 }
+
+
+static gboolean
+focus_slider_callback(GtkRange *widget, gpointer drawing)
+{
+    gdouble value = gtk_range_get_value(widget);
+
+    float t[1] = {(float)value};
+    glUniform1fv(unif.t, 1, t);
+
+    gtk_widget_queue_draw(drawing);
+}
+
 
 static gboolean
 display(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
@@ -142,17 +152,6 @@ display(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
     gdk_gl_drawable_gl_end(gl_drawable);
 }
 
-void
-keyboard(unsigned char key, int x, int y)
-{
-    switch (key)
-    {
-        case 's':
-            printf("saving image..\n");
-            save_output();
-            break;
-    }
-}
 
 static gboolean
 reshape(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
@@ -166,6 +165,7 @@ reshape(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
 
     gdk_gl_drawable_gl_end(gl_drawable);
 }
+
 
 static gboolean
 realize(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
@@ -183,7 +183,7 @@ realize(GtkWidget *drawing, GdkEventConfigure *event, gpointer user_data)
 
 
 void
-interface_setup()
+ui_setup()
 {
     GtkWidget *window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
     GtkWidget *hbox = gtk_hbox_new(FALSE, 0);
@@ -214,6 +214,7 @@ interface_setup()
     g_signal_connect(drawing, "realize", G_CALLBACK(realize), NULL);
     g_signal_connect(drawing, "configure-event", G_CALLBACK(reshape), NULL);
     g_signal_connect(drawing, "expose-event", G_CALLBACK(display), NULL);
+    g_signal_connect(focus_slider, "value-changed", G_CALLBACK(focus_slider_callback), drawing);
 
     gtk_widget_show_all(window);
 }
@@ -225,7 +226,7 @@ main(int argc, char *argv[])
     gtk_init(&argc, &argv);
     gtk_gl_init(&argc, &argv);
 
-    interface_setup();
+    ui_setup();
 
     gtk_main();
 
